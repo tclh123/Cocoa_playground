@@ -178,6 +178,7 @@
 				3255C453168DA32D00764FA8 /* Sources */,
 				3255C454168DA32D00764FA8 /* Frameworks */,
 				3255C455168DA32D00764FA8 /* Resources */,
+				328E72A716A7006700F56520 /* Run Script */,
 			);
 			buildRules = (
 			);
@@ -271,6 +272,20 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
+		};
+		328E72A716A7006700F56520 /* Run Script */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Run Script";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "export CODESIGN_ALLOCATE=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/codesign_allocate\nif [ \"${PLATFORM_NAME}\" == \"iphoneos\" ] || [ \"${PLATFORM_NAME}\" == \"ipados\" ]; then\n/Applications/Xcode.app/Contents/Developer/iphoneentitlements/gen_entitlements.py \"my.company.${PROJECT_NAME}\" \"${BUILT_PRODUCTS_DIR}/${WRAPPER_NAME}/${PROJECT_NAME}.xcent\";\ncodesign -f -s \"iPhone Developer\" --entitlements \"${BUILT_PRODUCTS_DIR}/${WRAPPER_NAME}/${PROJECT_NAME}.xcent\" \"${BUILT_PRODUCTS_DIR}/${WRAPPER_NAME}/\"\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -394,6 +409,7 @@
 		3255C494168DA32E00764FA8 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SingleView2/SingleView2-Prefix.pch";
 				INFOPLIST_FILE = "SingleView2/SingleView2-Info.plist";
@@ -405,6 +421,7 @@
 		3255C495168DA32E00764FA8 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SingleView2/SingleView2-Prefix.pch";
 				INFOPLIST_FILE = "SingleView2/SingleView2-Info.plist";
@@ -466,6 +483,7 @@
 				3255C495168DA32E00764FA8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		3255C496168DA32E00764FA8 /* Build configuration list for PBXNativeTarget "SingleView2Tests" */ = {
 			isa = XCConfigurationList;
@@ -474,6 +492,7 @@
 				3255C498168DA32E00764FA8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
