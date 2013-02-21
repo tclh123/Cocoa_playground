@@ -20,6 +20,9 @@
     // vertex_shader 传入变量 的指针
     GLuint _positionSlot;
     GLuint _colorSlot;
+    
+    // vertex_shader 的 projection
+    GLuint _projectionUniform; // uniform 关键字表示，这会是一个应用于所有顶点的常量，而不是会因为顶点不同而不同的值。
 }
 
 + (Class)layerClass;

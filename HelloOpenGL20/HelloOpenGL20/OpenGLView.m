@@ -7,7 +7,8 @@
 //
 
 #import "OpenGLView.h"
-//#import <QuartzCore/QuartzCore.h>
+#import "CC3GLMatrix.h"
+
 
 // 顶点 信息的结构Vertex
 typedef struct {
@@ -15,18 +16,20 @@ typedef struct {
     float Color[4];     //颜色
 } Vertex;
 
-// an array of Vertex
+// 4个点
 const Vertex Vertices[] = {
-    {{1, -1, 0}, {1, 0, 0, 1}},
-    {{1, 1, 0}, {0, 1, 0, 1}},
-    {{-1, 1, 0}, {0, 0, 1, 1}},
-    {{-1, -1, 0}, {0, 0, 0, 1}}
+    {{1, -1, -7}, {1, 0, 0, 1}},     // r
+    {{1, 1, -7}, {0, 1, 0, 1}},      // g
+    {{-1, 1, -7}, {0, 0, 1, 1}},     // b
+    {{-1, -1, -7}, {0, 0, 0, 1}}     // black
+    
+    // OpenGL 的 z轴是垂直屏幕向外的，所以 z坐标为负数
 };
 
 // 三角形顶点的 数组 , 存顶点index
 const GLubyte Indices[] = {
-    0, 1, 2,
-    2, 3, 0
+    0, 1, 2,    // 右上
+    2, 3, 0     // 左下
 };
 
 @interface OpenGLView()
@@ -117,6 +120,8 @@ const GLubyte Indices[] = {
     _colorSlot = glGetAttribLocation(programHandle, "SourceColor");
     glEnableVertexAttribArray(_positionSlot);
     glEnableVertexAttribArray(_colorSlot);
+    
+    _projectionUniform = glGetUniformLocation(programHandle, "Projection");
 }
 
 // 编译 shader，并返回 handle
@@ -214,6 +219,11 @@ const GLubyte Indices[] = {
 - (void)render {
     glClearColor(0, 104.0/255.0, 55.0/255.0, 1.0);  // 把屏幕清理一下，显示另一个颜色吧。（RGB 0, 104, 55，绿色吧）
     glClear(GL_COLOR_BUFFER_BIT);   // 清理 COLOR_BUFFER_BIT
+    
+    CC3GLMatrix *projection = [CC3GLMatrix matrix];
+    float h =4.0f* self.frame.size.height / self.frame.size.width;
+    [projection populateFromFrustumLeft:-2 andRight:2 andBottom:-h/2 andTop:h/2 andNear:4 andFar:10];   // 一个跟 frame.size对应的 平截头体 填充得projection
+    glUniformMatrix4fv(_projectionUniform, 1, GL_FALSE, projection.glMatrix);   // *_projectionUniform <- projection.glMatrix
     
     // 1 调用glViewport 设置UIView中用于渲染的部分。这个例子中指定了整个屏幕。但如果你希望用更小的部分，你可以更变这些参数
     glViewport(0, 0, self.frame.size.width, self.frame.size.height);
