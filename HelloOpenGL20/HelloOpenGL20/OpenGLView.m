@@ -9,16 +9,38 @@
 #import "OpenGLView.h"
 //#import <QuartzCore/QuartzCore.h>
 
+// 顶点 信息的结构Vertex
+typedef struct {
+    float Position[3];  //位置
+    float Color[4];     //颜色
+} Vertex;
+
+// an array of Vertex
+const Vertex Vertices[] = {
+    {{1, -1, 0}, {1, 0, 0, 1}},
+    {{1, 1, 0}, {0, 1, 0, 1}},
+    {{-1, 1, 0}, {0, 0, 1, 1}},
+    {{-1, -1, 0}, {0, 0, 0, 1}}
+};
+
+// 三角形顶点的 数组 , 存顶点index
+const GLubyte Indices[] = {
+    0, 1, 2,
+    2, 3, 0
+};
+
 @interface OpenGLView()
 
 - (void)setupLayer;
 - (void)setupContext;
 - (void)setupRenderBuffer;
 - (void)setupFrameBuffer;
-- (void)render;
+- (void)setupVertexBufferObjects;
 
 - (void)compileShaders;
 - (GLuint)compileShader:(NSString*)shaderName withType:(GLenum)shaderType;
+
+- (void)render;
 
 @end
 
@@ -34,12 +56,30 @@
         [self setupContext];
         [self setupRenderBuffer];
         [self setupFrameBuffer];
+        [self setupVertexBufferObjects];
         
         [self compileShaders];
         
         [self render];
     }
     return self;
+}
+
+// VBO: vertex buffer object
+- (void)setupVertexBufferObjects {
+    
+    // 顶点buffer
+    GLuint vertexBuffer;
+    glGenBuffers(1, &vertexBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(Vertices), Vertices, GL_STATIC_DRAW);
+    
+    // 顶点索引buffer
+    GLuint indexBuffer;
+    glGenBuffers(1, &indexBuffer);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Indices), Indices, GL_STATIC_DRAW);
+    
 }
 
 // 在运行时编译shaders
@@ -174,6 +214,29 @@
 - (void)render {
     glClearColor(0, 104.0/255.0, 55.0/255.0, 1.0);  // 把屏幕清理一下，显示另一个颜色吧。（RGB 0, 104, 55，绿色吧）
     glClear(GL_COLOR_BUFFER_BIT);   // 清理 COLOR_BUFFER_BIT
+    
+    // 1 调用glViewport 设置UIView中用于渲染的部分。这个例子中指定了整个屏幕。但如果你希望用更小的部分，你可以更变这些参数
+    glViewport(0, 0, self.frame.size.width, self.frame.size.height);
+    
+    // 2 设置 输入 参数（或者说属性），根据属性的指针（Gluint型）
+    // glVertexAttribPointer (GLuint indx, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const GLvoid* ptr)
+    glVertexAttribPointer(_positionSlot, 3, GL_FLOAT, GL_FALSE,
+                          sizeof(Vertex), 0);   // _positionSlot是 属性 的整数索引，或者说handle；Position 有3个float；地址为0，因为Position定义在shader的开头。
+    glVertexAttribPointer(_colorSlot, 4, GL_FLOAT, GL_FALSE,
+                          sizeof(Vertex), (GLvoid*) (sizeof(float) *3));    // 地址为 (GLvoid*) (sizeof(float) *3)，因为前面有Position（包含3个float）。
+    
+    // 3 调用glDrawElements ，
+    // 它最后会在每个vertex上调用我们的vertex shader，
+    // 以及每个像素调用fragment shader，最终画出我们的矩形
+    // glDrawElements (GLenum mode, GLsizei count, GLenum type, const GLvoid* indices);
+    glDrawElements(GL_TRIANGLES, sizeof(Indices)/sizeof(Indices[0]),
+                   GL_UNSIGNED_BYTE, 0);    // GL_TRIANGLES 指用三角形画（与使用VBO有关）；sizeof(Indices)/sizeof(Indices[0])为要画的元素数；GL_UNSIGNED_BYTE指Indices中的类型
+    // 最后一个0，在官方文档中说，它是一个指向index的指针。但在这里，我们用的是VBO，所以通过index的array就可以访问到了（在GL_ELEMENT_ARRAY_BUFFER传过了），所以这里不需要.
+    
+    
+    // 在缺省状态下，OpenGL的“camera”位于（0,0,0）位置，朝z轴的正方向。
+    
+    
     [_context presentRenderbuffer:GL_RENDERBUFFER]; // #define GL_RENDERBUFFER 0x8D41，前面已经绑定了
     // presentRenderbuffer 把缓冲区（render buffer和color buffer）的颜色呈现到UIView上
 }
