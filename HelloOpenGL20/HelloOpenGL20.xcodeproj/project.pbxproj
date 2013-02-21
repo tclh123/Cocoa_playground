@@ -21,6 +21,8 @@
 		323E1BB316D63521006E6B38 /* OpenGLView.m in Sources */ = {isa = PBXBuildFile; fileRef = 323E1BB216D63521006E6B38 /* OpenGLView.m */; };
 		323E1BB516D6353A006E6B38 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 323E1BB416D6353A006E6B38 /* OpenGLES.framework */; };
 		323E1BB716D63543006E6B38 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 323E1BB616D63543006E6B38 /* QuartzCore.framework */; };
+		323E1BB916D6668A006E6B38 /* SimpleVertex.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 323E1BB816D6668A006E6B38 /* SimpleVertex.glsl */; };
+		323E1BBB16D66846006E6B38 /* SimpleFragment.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 323E1BBA16D66846006E6B38 /* SimpleFragment.glsl */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -44,6 +46,8 @@
 		323E1BB216D63521006E6B38 /* OpenGLView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OpenGLView.m; sourceTree = "<group>"; };
 		323E1BB416D6353A006E6B38 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		323E1BB616D63543006E6B38 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		323E1BB816D6668A006E6B38 /* SimpleVertex.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SimpleVertex.glsl; sourceTree = "<group>"; };
+		323E1BBA16D66846006E6B38 /* SimpleFragment.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SimpleFragment.glsl; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -94,6 +98,7 @@
 		323E1B9216D631D9006E6B38 /* HelloOpenGL20 */ = {
 			isa = PBXGroup;
 			children = (
+				323E1BBC16D6779C006E6B38 /* GLSL */,
 				323E1BB016D634D0006E6B38 /* GL */,
 				323E1B9B16D631D9006E6B38 /* HOAppDelegate.h */,
 				323E1B9C16D631D9006E6B38 /* HOAppDelegate.m */,
@@ -126,6 +131,15 @@
 				323E1BB216D63521006E6B38 /* OpenGLView.m */,
 			);
 			name = GL;
+			sourceTree = "<group>";
+		};
+		323E1BBC16D6779C006E6B38 /* GLSL */ = {
+			isa = PBXGroup;
+			children = (
+				323E1BB816D6668A006E6B38 /* SimpleVertex.glsl */,
+				323E1BBA16D66846006E6B38 /* SimpleFragment.glsl */,
+			);
+			name = GLSL;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -186,6 +200,8 @@
 				323E1BA116D631D9006E6B38 /* Default@2x.png in Resources */,
 				323E1BA316D631D9006E6B38 /* Default-568h@2x.png in Resources */,
 				323E1BA916D631D9006E6B38 /* HOViewController.xib in Resources */,
+				323E1BB916D6668A006E6B38 /* SimpleVertex.glsl in Resources */,
+				323E1BBB16D66846006E6B38 /* SimpleFragment.glsl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -16,6 +16,10 @@
     CAEAGLLayer *_eaglLayer;    // CA EAGL Layer
     EAGLContext *_context;      // EAGL context
     GLuint _colorRenderBuffer;  // unsigned int, 唯一值标记一个 buffer
+    
+    // vertex_shader 传入变量 的指针
+    GLuint _positionSlot;
+    GLuint _colorSlot;
 }
 
 + (Class)layerClass;
