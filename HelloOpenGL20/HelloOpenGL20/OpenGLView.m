@@ -66,22 +66,6 @@ const GLubyte Indices[] = {
     0, 7, 4    
 };
 
-@interface OpenGLView()
-
-- (void)setupLayer;
-- (void)setupContext;
-- (void)setupRenderBuffer;
-- (void)setupFrameBuffer;
-- (void)setupVertexBufferObjects;
-
-- (void)compileShaders;
-- (GLuint)compileShader:(NSString*)shaderName withType:(GLenum)shaderType;
-
-- (void)setupDisplayLink;
-- (void)render:(CADisplayLink*)displayLink;
-
-@end
-
 @implementation OpenGLView
 
 // override initWithFrame 构造函数
@@ -92,9 +76,11 @@ const GLubyte Indices[] = {
         // Initialization code
         [self setupLayer];
         [self setupContext];
-        [self setupRenderBuffer];
-        [self setupFrameBuffer];
-        [self setupVertexBufferObjects];
+        [self setupDepthBuffer];            // depth
+        [self setupRenderBuffer];           // color
+        [self setupFrameBuffer];            // frame
+        
+        [self setupVertexBufferObjects];    // VBO
         
         [self compileShaders];
         
@@ -235,12 +221,21 @@ const GLubyte Indices[] = {
     }
 }
 
-// 创建render buffer（渲染缓冲区）
+// 创建color render buffer（渲染缓冲区）
 - (void)setupRenderBuffer {
     glGenRenderbuffers(1, &_colorRenderBuffer); //返回一个唯一的integer来标记render buffer（这里把这个唯一值赋值到_colorRenderBuffer）
     glBindRenderbuffer(GL_RENDERBUFFER, _colorRenderBuffer);    //其实就是告诉OpenGL，我们定义的buffer对象是属于哪一种OpenGL对象
     [_context renderbufferStorage:GL_RENDERBUFFER fromDrawable:_eaglLayer]; //为render buffer分配空间
 }
+
+// 创建depth buffer（深度测试 缓冲区）
+- (void)setupDepthBuffer {
+    glGenRenderbuffers(1, &_depthRenderBuffer);
+    glBindRenderbuffer(GL_RENDERBUFFER, _depthRenderBuffer);
+    // glRenderbufferStorage (GLenum target, GLenum internalformat, GLsizei width, GLsizei height)
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, self.frame.size.width, self.frame.size.height);
+}
+
 
 // 创建一个 frame buffer（帧缓冲区）
 /*
@@ -256,12 +251,15 @@ const GLubyte Indices[] = {
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, _colorRenderBuffer);
     // 它让你把前面创建的buffer render依附在frame buffer的GL_COLOR_ATTACHMENT0位置上。
 
+    // 把 depth buffer 附到 frame buffer上
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _depthRenderBuffer);
 }
 
-// 清理屏幕
+// 清理屏幕，并渲染
 - (void)render:(CADisplayLink*)displayLink {
     glClearColor(0, 104.0/255.0, 55.0/255.0, 1.0);  // 把屏幕清理一下，显示另一个颜色吧。（RGB 0, 104, 55，绿色吧）
-    glClear(GL_COLOR_BUFFER_BIT);   // 清理 COLOR_BUFFER_BIT
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);   // 清理buffer
+    glEnable(GL_DEPTH_TEST);    // 开启深度测试
     
     CC3GLMatrix *projection = [CC3GLMatrix matrix];
     float h =4.0f* self.frame.size.height / self.frame.size.width;

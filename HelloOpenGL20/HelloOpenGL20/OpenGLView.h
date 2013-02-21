@@ -15,7 +15,10 @@
 @interface OpenGLView : UIView {
     CAEAGLLayer *_eaglLayer;    // CA EAGL Layer
     EAGLContext *_context;      // EAGL context
+    
+    // buffer
     GLuint _colorRenderBuffer;  // unsigned int, 唯一值标记一个 buffer
+    GLuint _depthRenderBuffer;  // 深度测试 buffer
     
     // vertex_shader 传入变量 的指针
     GLuint _positionSlot;
@@ -26,7 +29,8 @@
     GLuint _projectionUniform;
     GLuint _modelViewUniform;
     
-    float _currentRotation;
+    // internal
+    float _currentRotation; // 维护旋转度数
 }
 
 + (Class)layerClass;
