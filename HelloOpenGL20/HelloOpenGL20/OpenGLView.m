@@ -18,10 +18,10 @@ typedef struct {
 
 // 4个点
 const Vertex Vertices[] = {
-    {{1, -1, -7}, {1, 0, 0, 1}},     // r
-    {{1, 1, -7}, {0, 1, 0, 1}},      // g
-    {{-1, 1, -7}, {0, 0, 1, 1}},     // b
-    {{-1, -1, -7}, {0, 0, 0, 1}}     // black
+    {{1, -1, 0}, {1, 0, 0, 1}},     // r
+    {{1, 1, 0}, {0, 1, 0, 1}},      // g
+    {{-1, 1, 0}, {0, 0, 1, 1}},     // b
+    {{-1, -1, 0}, {0, 0, 0, 1}}     // black
     
     // OpenGL 的 z轴是垂直屏幕向外的，所以 z坐标为负数
 };
@@ -43,7 +43,8 @@ const GLubyte Indices[] = {
 - (void)compileShaders;
 - (GLuint)compileShader:(NSString*)shaderName withType:(GLenum)shaderType;
 
-- (void)render;
+- (void)setupDisplayLink;
+- (void)render:(CADisplayLink*)displayLink;
 
 @end
 
@@ -63,9 +64,16 @@ const GLubyte Indices[] = {
         
         [self compileShaders];
         
-        [self render];
+//        [self render];
+        [self setupDisplayLink];
     }
     return self;
+}
+
+// 用 CADisplayLink，调用 render，使OpenGL的渲染频率跟屏幕的刷新频率一致
+- (void)setupDisplayLink {
+    CADisplayLink* displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(render:)];
+    [displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
 }
 
 // VBO: vertex buffer object
@@ -122,6 +130,7 @@ const GLubyte Indices[] = {
     glEnableVertexAttribArray(_colorSlot);
     
     _projectionUniform = glGetUniformLocation(programHandle, "Projection");
+    _modelViewUniform = glGetUniformLocation(programHandle, "Modelview");
 }
 
 // 编译 shader，并返回 handle
@@ -216,7 +225,7 @@ const GLubyte Indices[] = {
 }
 
 // 清理屏幕
-- (void)render {
+- (void)render:(CADisplayLink*)displayLink {
     glClearColor(0, 104.0/255.0, 55.0/255.0, 1.0);  // 把屏幕清理一下，显示另一个颜色吧。（RGB 0, 104, 55，绿色吧）
     glClear(GL_COLOR_BUFFER_BIT);   // 清理 COLOR_BUFFER_BIT
     
@@ -224,6 +233,12 @@ const GLubyte Indices[] = {
     float h =4.0f* self.frame.size.height / self.frame.size.width;
     [projection populateFromFrustumLeft:-2 andRight:2 andBottom:-h/2 andTop:h/2 andNear:4 andFar:10];   // 一个跟 frame.size对应的 平截头体 填充得projection
     glUniformMatrix4fv(_projectionUniform, 1, GL_FALSE, projection.glMatrix);   // *_projectionUniform <- projection.glMatrix
+    
+    CC3GLMatrix *modelView = [CC3GLMatrix matrix];
+    [modelView populateFromTranslation:CC3VectorMake(sin(CACurrentMediaTime()), 0, -7)];    // 平移 (x,y,z)
+    _currentRotation += displayLink.duration *90;       // _currentRotation 每秒会增加90度
+    [modelView rotateBy:CC3VectorMake(_currentRotation, _currentRotation, 0)];  // 同时沿x，y轴旋转
+    glUniformMatrix4fv(_modelViewUniform, 1, 0, modelView.glMatrix);
     
     // 1 调用glViewport 设置UIView中用于渲染的部分。这个例子中指定了整个屏幕。但如果你希望用更小的部分，你可以更变这些参数
     glViewport(0, 0, self.frame.size.width, self.frame.size.height);
