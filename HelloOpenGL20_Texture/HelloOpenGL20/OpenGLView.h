@@ -29,6 +29,19 @@
     GLuint _projectionUniform;
     GLuint _modelViewUniform;
     
+    //
+    GLuint _floorTexture;
+    GLuint _fishTexture;
+    GLuint _texCoordSlot;
+    GLuint _textureUniform; //GLSL: uniform sampler2D Texture;
+    
+    // 2
+    GLuint _vertexBuffer;
+    GLuint _indexBuffer;
+    GLuint _vertexBuffer2;
+    GLuint _indexBuffer2;
+
+    
     // internal
     float _currentRotation; // 维护旋转度数
 }

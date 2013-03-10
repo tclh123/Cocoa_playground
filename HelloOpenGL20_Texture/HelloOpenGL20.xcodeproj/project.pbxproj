@@ -27,6 +27,8 @@
 		323E1BCD16D684D7006E6B38 /* CC3GLMatrix.m in Sources */ = {isa = PBXBuildFile; fileRef = 323E1BC516D684D7006E6B38 /* CC3GLMatrix.m */; };
 		323E1BCE16D684D7006E6B38 /* CC3Kazmath.c in Sources */ = {isa = PBXBuildFile; fileRef = 323E1BC616D684D7006E6B38 /* CC3Kazmath.c */; };
 		323E1BCF16D684D7006E6B38 /* CC3Math.m in Sources */ = {isa = PBXBuildFile; fileRef = 323E1BCA16D684D7006E6B38 /* CC3Math.m */; };
+		3240532C16EC904400AECD85 /* item_powerup_fish.png in Resources */ = {isa = PBXBuildFile; fileRef = 3240532A16EC904400AECD85 /* item_powerup_fish.png */; };
+		3240532D16EC904400AECD85 /* tile_floor.png in Resources */ = {isa = PBXBuildFile; fileRef = 3240532B16EC904400AECD85 /* tile_floor.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -62,6 +64,8 @@
 		323E1BC916D684D7006E6B38 /* CC3Math.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CC3Math.h; sourceTree = "<group>"; };
 		323E1BCA16D684D7006E6B38 /* CC3Math.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CC3Math.m; sourceTree = "<group>"; };
 		323E1BCB16D684D7006E6B38 /* ccTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ccTypes.h; sourceTree = "<group>"; };
+		3240532A16EC904400AECD85 /* item_powerup_fish.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = item_powerup_fish.png; sourceTree = "<group>"; };
+		3240532B16EC904400AECD85 /* tile_floor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = tile_floor.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -112,6 +116,7 @@
 		323E1B9216D631D9006E6B38 /* HelloOpenGL20 */ = {
 			isa = PBXGroup;
 			children = (
+				3240532816EC904400AECD85 /* Resource */,
 				323E1BC116D684D7006E6B38 /* Cocos3DMathLib */,
 				323E1BBC16D6779C006E6B38 /* GLSL */,
 				323E1BB016D634D0006E6B38 /* GL */,
@@ -174,6 +179,23 @@
 			path = Cocos3DMathLib;
 			sourceTree = "<group>";
 		};
+		3240532816EC904400AECD85 /* Resource */ = {
+			isa = PBXGroup;
+			children = (
+				3240532916EC904400AECD85 /* Art */,
+			);
+			path = Resource;
+			sourceTree = "<group>";
+		};
+		3240532916EC904400AECD85 /* Art */ = {
+			isa = PBXGroup;
+			children = (
+				3240532A16EC904400AECD85 /* item_powerup_fish.png */,
+				3240532B16EC904400AECD85 /* tile_floor.png */,
+			);
+			path = Art;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -234,6 +256,8 @@
 				323E1BA916D631D9006E6B38 /* HOViewController.xib in Resources */,
 				323E1BB916D6668A006E6B38 /* SimpleVertex.glsl in Resources */,
 				323E1BBB16D66846006E6B38 /* SimpleFragment.glsl in Resources */,
+				3240532C16EC904400AECD85 /* item_powerup_fish.png in Resources */,
+				3240532D16EC904400AECD85 /* tile_floor.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -387,6 +411,7 @@
 				323E1BAE16D631D9006E6B38 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

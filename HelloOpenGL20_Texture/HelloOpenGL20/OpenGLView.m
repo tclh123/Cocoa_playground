@@ -14,7 +14,21 @@
 typedef struct {
     float Position[3];  //位置
     float Color[4];     //颜色
+    float TexCoord[2]; // New
 } Vertex;
+
+
+// 2
+const Vertex Vertices2[] = {
+    {{0.5, -0.5, 0.01}, {1, 1, 1, 1}, {1, 1}},
+    {{0.5, 0.5, 0.01}, {1, 1, 1, 1}, {1, 0}},
+    {{-0.5, 0.5, 0.01}, {1, 1, 1, 1}, {0, 0}},
+    {{-0.5, -0.5, 0.01}, {1, 1, 1, 1}, {0, 1}},
+};
+
+const GLubyte Indices2[] = {
+    1, 0, 2, 3      // GL_TRIANGLE_STRIP: 102 203
+};
 
 //// 4个点
 //const Vertex Vertices[] = {
@@ -31,40 +45,102 @@ typedef struct {
 //    2, 3, 0     // 左下
 //};
 
-// 8个点
+//#define TEX_COORD_MAX   1
+#define TEX_COORD_MAX   4  // 重复纹理，因 GL_TEXTURE_WRAP_S 和GL_TEXTURE_WRAP_T 默认值是GL_REPEAT
+// 当映射纹理坐标的时候，它的行为看起来好像是1的模---比如，如果你的纹理坐标是1.5，那么映射的纹理坐标就会是0.5.
+// 注：纹理坐标 一定是 (0,0)-(1,1)的，变的只能是 纹理映射坐标
+
+// 纹理贴图 每个顶点属于若干个面，所以按面(6个)来设置顶点(24个)信息
 const Vertex Vertices[] = {
-    {{1, -1, 0}, {1, 0, 0, 1}},
-    {{1, 1, 0}, {1, 0, 0, 1}},
-    {{-1, 1, 0}, {0, 1, 0, 1}},
-    {{-1, -1, 0}, {0, 1, 0, 1}},
-    
-    {{1, -1, -1}, {1, 0, 0, 1}},
-    {{1, 1, -1}, {1, 0, 0, 1}},
-    {{-1, 1, -1}, {0, 1, 0, 1}},
-    {{-1, -1, -1}, {0, 1, 0, 1}}
+    // Front
+    {{1, -1, 0}, {1, 0, 0, 1}, {TEX_COORD_MAX, 0}},     // 右下
+    {{1, 1, 0}, {0, 1, 0, 1}, {TEX_COORD_MAX, TEX_COORD_MAX}},  // 右上
+    {{-1, 1, 0}, {0, 0, 1, 1}, {0, TEX_COORD_MAX}},     // 左上
+    {{-1, -1, 0}, {0, 0, 0, 1}, {0, 0}},                // 左下
+    // Back
+    {{1, 1, -2}, {1, 0, 0, 1}, {TEX_COORD_MAX, 0}},
+    {{-1, -1, -2}, {0, 1, 0, 1}, {TEX_COORD_MAX, TEX_COORD_MAX}},
+    {{1, -1, -2}, {0, 0, 1, 1}, {0, TEX_COORD_MAX}},
+    {{-1, 1, -2}, {0, 0, 0, 1}, {0, 0}},
+    // Left
+    {{-1, -1, 0}, {1, 0, 0, 1}, {TEX_COORD_MAX, 0}},
+    {{-1, 1, 0}, {0, 1, 0, 1}, {TEX_COORD_MAX, TEX_COORD_MAX}},
+    {{-1, 1, -2}, {0, 0, 1, 1}, {0, TEX_COORD_MAX}},
+    {{-1, -1, -2}, {0, 0, 0, 1}, {0, 0}},
+    // Right
+    {{1, -1, -2}, {1, 0, 0, 1}, {TEX_COORD_MAX, 0}},
+    {{1, 1, -2}, {0, 1, 0, 1}, {TEX_COORD_MAX, TEX_COORD_MAX}},
+    {{1, 1, 0}, {0, 0, 1, 1}, {0, TEX_COORD_MAX}},
+    {{1, -1, 0}, {0, 0, 0, 1}, {0, 0}},
+    // Top
+    {{1, 1, 0}, {1, 0, 0, 1}, {TEX_COORD_MAX, 0}},
+    {{1, 1, -2}, {0, 1, 0, 1}, {TEX_COORD_MAX, TEX_COORD_MAX}},
+    {{-1, 1, -2}, {0, 0, 1, 1}, {0, TEX_COORD_MAX}},
+    {{-1, 1, 0}, {0, 0, 0, 1}, {0, 0}},
+    // Bottom
+    {{1, -1, -2}, {1, 0, 0, 1}, {TEX_COORD_MAX, 0}},
+    {{1, -1, 0}, {0, 1, 0, 1}, {TEX_COORD_MAX, TEX_COORD_MAX}},
+    {{-1, -1, 0}, {0, 0, 1, 1}, {0, TEX_COORD_MAX}},
+    {{-1, -1, -2}, {0, 0, 0, 1}, {0, 0}}
 };
 
-// 6个面，每个面2个三角形
 const GLubyte Indices[] = {
     // Front
     0, 1, 2,
     2, 3, 0,
     // Back
-    4, 6, 5,
-    4, 7, 6,
+    4, 5, 6,
+//    4, 5, 7,    // 6 7 4
+    6, 7, 4,
     // Left
-    2, 7, 3,
-    7, 6, 2,
+    8, 9, 10,
+    10, 11, 8,
     // Right
-    0, 4, 1,
-    4, 1, 5,
+    12, 13, 14,
+    14, 15, 12,
     // Top
-    6, 2, 1,
-    1, 6, 5,
+    16, 17, 18,
+    18, 19, 16,
     // Bottom
-    0, 3, 7,
-    0, 7, 4    
+    20, 21, 22,
+    22, 23, 20
 };
+
+
+//// 8个点
+//const Vertex Vertices[] = {
+//    {{1, -1, 0}, {1, 0, 0, 1}, {1, 0}},
+//    {{1, 1, 0}, {1, 0, 0, 1}, {1, 1}},
+//    {{-1, 1, 0}, {0, 1, 0, 1}, {0, 1}},
+//    {{-1, -1, 0}, {0, 1, 0, 1}, {0, 0}},
+//    
+//    {{1, -1, -1}, {1, 0, 0, 1}, {1, 0}},
+//    {{1, 1, -1}, {1, 0, 0, 1}, {1, 1}},
+//    {{-1, 1, -1}, {0, 1, 0, 1}, {0, 1}},
+//    {{-1, -1, -1}, {0, 1, 0, 1}, {0, 0}}
+//};
+//
+//// 6个面，每个面2个三角形
+//const GLubyte Indices[] = {
+//    // Front
+//    0, 1, 2,
+//    2, 3, 0,
+//    // Back
+//    4, 6, 5,
+//    4, 7, 6,
+//    // Left
+//    2, 7, 3,
+//    7, 6, 2,
+//    // Right
+//    0, 4, 1,
+//    4, 1, 5,
+//    // Top
+//    6, 2, 1,
+//    1, 6, 5,
+//    // Bottom
+//    0, 3, 7,
+//    0, 7, 4    
+//};
 
 @implementation OpenGLView
 
@@ -86,9 +162,52 @@ const GLubyte Indices[] = {
         
 //        [self render];
         [self setupDisplayLink];
+        
+        // setupTextures
+        _floorTexture = [self setupTexture:@"tile_floor.png"];
+        _fishTexture = [self setupTexture:@"item_powerup_fish.png"];
     }
     return self;
 }
+
+- (GLuint)setupTexture:(NSString *)fileName {
+    // 1
+    CGImageRef spriteImage = [UIImage imageNamed:fileName].CGImage;
+    if (!spriteImage) {
+        NSLog(@"Failed to load image %@", fileName);
+        exit(1);
+    }
+    
+    // 2 建立绘图上下文
+    size_t width = CGImageGetWidth(spriteImage);
+    size_t height = CGImageGetHeight(spriteImage);
+    
+    GLubyte * spriteData = (GLubyte *) calloc(width*height*4, sizeof(GLubyte));
+    
+    // CGContextRef CGBitmapContextCreate(void *data, size_t width, size_t height, size_t bitsPerComponent, size_t bytesPerRow, CGColorSpaceRef space, CGBitmapInfo bitmapInfo)
+    CGContextRef spriteContext = CGBitmapContextCreate(spriteData, width, height, 8, width*4,
+                                                       CGImageGetColorSpace(spriteImage), kCGImageAlphaPremultipliedLast);  // Premultiplied : 预乘 ?
+    
+    // 3 draw 到 context
+    CGContextDrawImage(spriteContext, CGRectMake(0, 0, width, height), spriteImage);
+    
+    CGContextRelease(spriteContext);
+    
+    // 4
+    GLuint texName;
+    glGenTextures(1, &texName); // 创建一个纹理对象
+    glBindTexture(GL_TEXTURE_2D, texName);  // 把我们新建的纹理名字加载到当前的纹理单元中
+    
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);  // 设置函数参数为GL_TEXTURE_MIN_FILTER（这个参数的意思是，当我们绘制远距离的对象的时候，我们会把纹理缩小）和GL_NEAREST（这个参数的作用是，当绘制顶点的时候，选择最邻近的纹理像素）
+    
+    // 像素buffer -> OpenGL
+    // void glTexImage2D (GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const GLvoid* pixels)
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, spriteData);
+    
+    free(spriteData);
+    return texName;    
+}
+
 
 // 用 CADisplayLink，调用 render，使OpenGL的渲染频率跟屏幕的刷新频率一致
 - (void)setupDisplayLink {
@@ -100,17 +219,24 @@ const GLubyte Indices[] = {
 - (void)setupVertexBufferObjects {
     
     // 顶点buffer
-    GLuint vertexBuffer;
-    glGenBuffers(1, &vertexBuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+    glGenBuffers(1, &_vertexBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
     glBufferData(GL_ARRAY_BUFFER, sizeof(Vertices), Vertices, GL_STATIC_DRAW);
     
     // 顶点索引buffer
-    GLuint indexBuffer;
-    glGenBuffers(1, &indexBuffer);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+    glGenBuffers(1, &_indexBuffer);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indexBuffer);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Indices), Indices, GL_STATIC_DRAW);
     
+    // 2
+    glGenBuffers(1, &_vertexBuffer2);
+    glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer2);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(Vertices2), Vertices2, GL_STATIC_DRAW);
+    
+    glGenBuffers(1, &_indexBuffer2);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indexBuffer2);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Indices2), Indices2, GL_STATIC_DRAW);
+
 }
 
 // 在运行时编译shaders
@@ -151,6 +277,13 @@ const GLubyte Indices[] = {
     
     _projectionUniform = glGetUniformLocation(programHandle, "Projection");
     _modelViewUniform = glGetUniformLocation(programHandle, "Modelview");
+    
+    // new
+    _texCoordSlot = glGetAttribLocation(programHandle, "TexCoordIn");
+    glEnableVertexAttribArray(_texCoordSlot);
+    
+    _textureUniform = glGetUniformLocation(programHandle, "Texture");
+
 }
 
 // 编译 shader，并返回 handle
@@ -261,6 +394,10 @@ const GLubyte Indices[] = {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);   // 清理buffer
     glEnable(GL_DEPTH_TEST);    // 开启深度测试
     
+    // 开启 blend（混合，协调）
+    glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);    // 设置源为GL_ONE的意思是渲染所有的源图像的像素，而GL_ONE_MINS_SRC_ALPHA意思是渲染所有的目标图像数据，但是源图像存在的时候，就不渲染。得到的效果就是，源图片覆盖在目的图像上面。
+    glEnable(GL_BLEND);
+    
     CC3GLMatrix *projection = [CC3GLMatrix matrix];
     float h =4.0f* self.frame.size.height / self.frame.size.width;
     [projection populateFromFrustumLeft:-2 andRight:2 andBottom:-h/2 andTop:h/2 andNear:4 andFar:10];   // 一个跟 frame.size对应的 平截头体 填充得projection
@@ -275,12 +412,24 @@ const GLubyte Indices[] = {
     // 1 调用glViewport 设置UIView中用于渲染的部分。这个例子中指定了整个屏幕。但如果你希望用更小的部分，你可以更变这些参数
     glViewport(0, 0, self.frame.size.width, self.frame.size.height);
     
+    // NEW
+    glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indexBuffer);
+    
     // 2 设置 输入 参数（或者说属性），根据属性的指针（Gluint型）
     // glVertexAttribPointer (GLuint indx, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const GLvoid* ptr)
     glVertexAttribPointer(_positionSlot, 3, GL_FLOAT, GL_FALSE,
                           sizeof(Vertex), 0);   // _positionSlot是 属性 的整数索引，或者说handle；Position 有3个float；地址为0，因为Position定义在shader的开头。
     glVertexAttribPointer(_colorSlot, 4, GL_FLOAT, GL_FALSE,
                           sizeof(Vertex), (GLvoid*) (sizeof(float) *3));    // 地址为 (GLvoid*) (sizeof(float) *3)，因为前面有Position（包含3个float）。
+    
+    // new
+    glVertexAttribPointer(_texCoordSlot, 2, GL_FLOAT, GL_FALSE,
+                          sizeof(Vertex), (GLvoid*) (sizeof(float) *7));
+    
+    glActiveTexture(GL_TEXTURE0);   // 激活我们想要加载进入的纹理单元（GL_TEXTURE0是第一个纹理单元）
+    glBindTexture(GL_TEXTURE_2D, _floorTexture);    // 把纹理绑定到当前的纹理单元中(GL_TEXTURE0)
+    glUniform1i(_textureUniform, 0);    // 默认的（是指 Texture <- 0号纹理单元 吗？）
     
     // 3 调用glDrawElements ，
     // 它最后会在每个vertex上调用我们的vertex shader，
@@ -290,14 +439,25 @@ const GLubyte Indices[] = {
                    GL_UNSIGNED_BYTE, 0);    // GL_TRIANGLES 指用三角形画（与使用VBO有关）；sizeof(Indices)/sizeof(Indices[0])为要画的元素数；GL_UNSIGNED_BYTE指Indices中的类型
     // 最后一个0，在官方文档中说，它是一个指向index的指针。但在这里，我们用的是VBO，所以通过index的array就可以访问到了（在GL_ELEMENT_ARRAY_BUFFER传过了），所以这里不需要.
     
-    // add another
-    [modelView rotateBy:CC3VectorMake(_currentRotation+90, _currentRotation+90, 0)];  // 同时沿x，y轴旋转
-    glUniformMatrix4fv(_modelViewUniform, 1, 0, modelView.glMatrix);
-    glDrawElements(GL_TRIANGLES, sizeof(Indices)/sizeof(Indices[0]),
-                   GL_UNSIGNED_BYTE, 0);
-    
     // 在缺省状态下，OpenGL的“camera”位于（0,0,0）位置，朝z轴的正方向。
     
+    // NEW
+    glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer2);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indexBuffer2);
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, _fishTexture);
+    glUniform1i(_textureUniform, 0);
+    
+    glUniformMatrix4fv(_modelViewUniform, 1, 0, modelView.glMatrix);
+    
+    glVertexAttribPointer(_positionSlot, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
+    glVertexAttribPointer(_colorSlot, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*) (sizeof(float) *3));
+    glVertexAttribPointer(_texCoordSlot, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*) (sizeof(float) *7));
+    
+    // GL_TRIANGLE_STRIP
+    glDrawElements(GL_TRIANGLE_STRIP, sizeof(Indices2)/sizeof(Indices2[0]), GL_UNSIGNED_BYTE, 0);
+
     
     [_context presentRenderbuffer:GL_RENDERBUFFER]; // #define GL_RENDERBUFFER 0x8D41，前面已经绑定了
     // presentRenderbuffer 把缓冲区（render buffer和color buffer）的颜色呈现到UIView上
